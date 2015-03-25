@@ -14,13 +14,36 @@ namespace eMotoCellSimulator
     public partial class Form1 : Form
     {
         public static byte[] PREAMBLE = {(byte)0xEC,(byte)0xDF};
-        public  const byte PREAMBLE0 = (byte)0xEC;
+        public const byte PREAMBLE0 = (byte)0xEC;
         public const byte PREAMBLE1 = (byte)0xDF;
-        public  const byte GET_STATUS = (byte)0xA5;
-        public  const byte RTS_IMAGE = (byte)0x4B;
-        public  const byte ACK_IMAGE_INFO = (byte)0x6B;
-        public  const byte ACK_IMAGE_DATA = (byte)0x4A;
+        public const byte GET_STATUS = (byte)0xA5;
+        public const byte RTS_IMAGE = (byte)0x4B;
+        public const byte ACK_IMAGE_INFO = (byte)0x6B;
+        public const byte ACK_IMAGE_DATA = (byte)0x4A;
         public const byte NACK_RTS = (byte)0x9E;
+
+        public const byte GET_COMMAND = (byte)0xA5;
+        public const byte SET_COMMAND = (byte)0x4B;
+        public const byte ACK_COMMAND= (byte)0x6B;
+        public const byte NACK_COMMAND = (byte)0x8E;
+               
+        public const byte DID_DEVICE_ID = (byte)0x00;
+        public const byte DID_HW_VERSION = (byte)0x01;
+        public const byte DID_FW_VERSION = (byte)0x02;
+        public const byte DID_PROTOCOL = (byte)0x03;
+        public const byte DID_C_TIME = (byte)0x10;
+        public const byte DID_IMG_INFO = (byte)0x20;
+        public const byte DID_IMG_DATA = (byte)0x21;
+        public const byte DID_IMG_ONLIST = (byte)0x22;
+               
+        public const int LEN_DID_ACK_DEV_ID = 4;
+        public const int LEN_DID_GET_DEV_ID = 1;
+        public const int LEN_DID_HW_VER = 2;
+        public const int LEN_DID_FW_VER = 2;
+        public const int LEN_DID_C_TIME = 6;
+        public const int LEN_DID_SET_IMG_INFO = 15;
+
+        public const int LEN_PKT_HEADER = 8;
 
         string strBuff;
         byte[] incomingBuffer;
@@ -81,12 +104,16 @@ namespace eMotoCellSimulator
                     {
                         listBoxASCII.Items.Add("Preamble Detected");
 
-                        byte transactionID = mainBuffer[i + 2];
-                        byte command = mainBuffer[i + 3];
-                        byte contentSize0 =mainBuffer[i + 4];
-                        byte contentSize1  =mainBuffer[i + 5];
-                        byte contentCRC  =mainBuffer[i + 6];
-                        byte headerCRC  = mainBuffer[i + 7];
+                        byte[] headerBytes = new byte[LEN_PKT_HEADER];
+                        Buffer.BlockCopy(mainBuffer, i, headerBytes, 0, LEN_PKT_HEADER);
+                       
+                        byte transactionID =    headerBytes[2];
+                        byte command =          headerBytes[3];
+                        byte contentSize0 =     headerBytes[4];
+                        byte contentSize1  =    headerBytes[5];
+                        byte contentCRC  =      headerBytes[6];
+                        byte headerCRC  =       headerBytes[7];
+
                         byte[] contentSizeArray = {contentSize0,contentSize1};
 
                         byte[] ContentSizeArray = new byte[2] { contentSize0, contentSize1 };
@@ -96,52 +123,52 @@ namespace eMotoCellSimulator
                         listBoxASCII.Items.Add("Header CRC: " + headerCRC.ToString("X2"));
                         listBoxASCII.Items.Add("Content CRC:" + contentCRC.ToString("X2"));      
 
-                        //Analyse Header
-                        switch (command)
-                        {
-
-                            case GET_STATUS: listBoxASCII.Items.Add("Command: GET_STATUS");
-                                break;
-                            case RTS_IMAGE: listBoxASCII.Items.Add("Command: RTS_IMAGE");
-                                break;
-                            case ACK_IMAGE_DATA: listBoxASCII.Items.Add("Command: ACK_IMAGE_DATA");
-                                break;
-                            case ACK_IMAGE_INFO: listBoxASCII.Items.Add("Command: ACK_IMAGE_INFO");
-                                break;
-                            case NACK_RTS:
-                                listBoxASCII.Items.Add("Command: ACK_IMAGE_INFO");
-                                break;
-                            default:
-                                listBoxASCII.Items.Add("Unrecognized command");
-                                break;
+                        //TODO: droppacket if the the header is corrupt
+                        if (headerCRC != xCRCGen.crc_8_ccitt(headerBytes, LEN_PKT_HEADER - 1)){
+                             listBoxASCII.Items.Add("Header Corrupt");    
                         }
 
-                        int iMessageLength = 8 + iContentLength; //Header Length
-                        byte[] messageBytes = new byte[iMessageLength];
-                        Buffer.BlockCopy(mainBuffer, i, messageBytes, 0, iMessageLength);
+                        int iMessageLength = LEN_PKT_HEADER + iContentLength; //get entire pkt length
 
-                        if (iMessageLength + i<= mainBuffer.Length)
+                        if (iMessageLength + i<= mainBuffer.Length) //if the entire pkt is received
                         {                      
-                        int iNewRemainingMainBufferLength = mainBuffer.Length - iMessageLength - i;
-                        byte[] newRemainingMainBuffer = new byte[iNewRemainingMainBufferLength];
+                            int iNewRemainingMainBufferLength = mainBuffer.Length - iMessageLength - i;
+                            byte[] newRemainingMainBuffer = new byte[iNewRemainingMainBufferLength];
+                            byte[] contentBytes = new byte[iContentLength];
                         
+                            //Extract pkt from main Buffer
+                            Buffer.BlockCopy(mainBuffer, iMessageLength + i, newRemainingMainBuffer, 0, iNewRemainingMainBufferLength);
+                            Buffer.BlockCopy(mainBuffer, LEN_PKT_HEADER + i, contentBytes, 0, iContentLength);
+                            mainBuffer = newRemainingMainBuffer; 
+                           
+                            // TODO: nack Pkt of content corrupt
+                            if (contentCRC != xCRCGen.crc_8_ccitt(contentBytes, iContentLength))
+                            {
+                                listBoxASCII.Items.Add("Packet Content Corrupt");
+                            }
 
-                        //Extract message from main Buffer
-                        Buffer.BlockCopy(mainBuffer, iMessageLength + i, newRemainingMainBuffer, 0, iNewRemainingMainBufferLength);
-                        
+                            //Analyse Header
+                            switch (command)
+                            {
+                                case GET_COMMAND: listBoxASCII.Items.Add("Command: GET_COMMAND");
+                                    // TODO: Process get command 
+                                    break;
+                                case SET_COMMAND: listBoxASCII.Items.Add("Command: SET_COMMAND");
+                                    // TODO: Process data
+                                    break;
 
-                        byte[] contentBytes = new byte[iContentLength];
-                        Buffer.BlockCopy(messageBytes,8, contentBytes, 0, iContentLength);
+                                default:
+                                    listBoxASCII.Items.Add("Unrecognized command");
+                                    break;
+                            }
 
-                        mainBuffer = newRemainingMainBuffer;
-
-                        listBoxASCII.Items.Add("messageBytes:" + BitConverter.ToString(messageBytes).Replace("-", ":"));
-                        listBoxASCII.Items.Add("contentBytes:" + BitConverter.ToString(contentBytes).Replace("-", ":"));
+                            listBoxASCII.Items.Add("messageBytes:" + BitConverter.ToString(headerBytes).Replace("-", ":"));
+                            listBoxASCII.Items.Add("contentBytes:" + BitConverter.ToString(contentBytes).Replace("-", ":"));
                         }
                         else
                         {
-                        
-                            listBoxASCII.Items.Add("messageBytes:" + BitConverter.ToString(messageBytes).Replace("-", ":"));
+
+                            listBoxASCII.Items.Add("messageBytes:" + BitConverter.ToString(headerBytes).Replace("-", ":"));
                             listBoxASCII.Items.Add("content: Not All Data Received");
                         }
                     }
@@ -167,6 +194,105 @@ namespace eMotoCellSimulator
             listBoxASCII.Items.Clear();
             listBoxHex.Items.Clear();
         }
+
+
+
+
+
+        //=======================================================================================
+        //
+        //=======================================================================================
+
+        public class xCRCGen
+        {
+
+            /*
+             * Reads in a sequence of bytes and returns its 16 bit Cylcic Redundancy
+             * Check (CRC-CCIIT 0xFFFF).
+             *
+             * 1 + x + x^5 + x^12 + x^16 is irreducible polynomial.
+             *
+             * Copyright 2000Ð2011, Robert Sedgewick and Kevin Wayne
+             * source: http://introcs.cs.princeton.edu/java/51data/CRC16CCITT.java.html
+             */
+            public static int crc_16_ccitt(byte[] msg, int len)
+            {
+                int crc = 0xFFFF; // initial value
+                int polynomial = 0x1021; // 0001 0000 0010 0001 (0, 5, 12)
+
+                bool bit, c15;
+                for (int b = 0; b < len; b++)
+                {
+                    for (int i = 0; i < 8; i++)
+                    {
+                        bit = ((msg[b] >> (7 - i) & 1) == 1);
+                        c15 = ((crc >> 15 & 1) == 1);
+                        crc <<= 1;
+                        if (c15 ^ bit)
+                            crc ^= polynomial;
+                    }
+                }
+                crc &= 0xffff;
+
+                return crc;
+            }
+
+            /* Computes the CRC-8-CCITT checksum on array of byte data, length len */
+
+            public static byte crc_8_ccitt(byte[] msg, int len)
+            {
+                int crc = (byte)0xFF; // initial value
+                int polynomial = 0x07; // (0, 1, 2) : 0x07 / 0xE0 / 0x83
+
+                bool bit, c7;
+
+                for (int b = 0; b < len; b++)
+                {
+                    for (int i = 0; i < 8; i++)
+                    {
+                        bit = ((msg[b] >> (7 - i) & 1) == 1);
+                        c7 = ((crc >> 7 & 1) == 1);
+                        crc <<= 1;
+                        if (c7 ^ bit)
+                            crc ^= polynomial;
+                    }
+                }
+                crc &= 0xffff;
+
+                return (byte)crc;
+            }
+
+            /* Computes the CRC-CCITT checksum on array of byte data, length len */
+
+            public static int crc_ccitt(byte[] msg, int len)
+            {
+                int i, acc = 0;
+
+                for (i = 0; i < len; i++)
+                {
+                    acc = crchware((0xFF & (int)msg[i]), 0x1021, acc);
+                }
+
+                return acc;
+            }
+
+            /* models crc hardware (minor variation on polynomial division algorithm) */
+            public static int crchware(int data, int genpoly, int accum)
+            {
+                int i;
+                data <<= 8;
+                for (i = 8; i > 0; i--)
+                {
+                    if (((data ^ accum) & 0x8000) == 1)
+                        accum = (((accum << 1) ^ genpoly) & 0xFFFF);
+                    else
+                        accum = ((accum << 1) & 0xFFFF);
+                    data = ((data << 1) & 0xFFFF);
+                }
+                return accum;
+            }
+        }
+
 
     }
 }
