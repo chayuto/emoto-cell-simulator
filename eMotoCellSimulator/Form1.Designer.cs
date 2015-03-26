@@ -49,29 +49,24 @@
             // listBoxASCII
             // 
             this.listBoxASCII.FormattingEnabled = true;
-            this.listBoxASCII.ItemHeight = 20;
-            this.listBoxASCII.Location = new System.Drawing.Point(18, 58);
-            this.listBoxASCII.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.listBoxASCII.Location = new System.Drawing.Point(12, 38);
             this.listBoxASCII.Name = "listBoxASCII";
-            this.listBoxASCII.Size = new System.Drawing.Size(373, 384);
+            this.listBoxASCII.Size = new System.Drawing.Size(250, 251);
             this.listBoxASCII.TabIndex = 0;
             // 
             // listBoxHex
             // 
             this.listBoxHex.FormattingEnabled = true;
-            this.listBoxHex.ItemHeight = 20;
-            this.listBoxHex.Location = new System.Drawing.Point(402, 58);
-            this.listBoxHex.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.listBoxHex.Location = new System.Drawing.Point(268, 38);
             this.listBoxHex.Name = "listBoxHex";
-            this.listBoxHex.Size = new System.Drawing.Size(390, 384);
+            this.listBoxHex.Size = new System.Drawing.Size(261, 251);
             this.listBoxHex.TabIndex = 1;
             // 
             // btnSend1
             // 
-            this.btnSend1.Location = new System.Drawing.Point(560, 530);
-            this.btnSend1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnSend1.Location = new System.Drawing.Point(373, 344);
             this.btnSend1.Name = "btnSend1";
-            this.btnSend1.Size = new System.Drawing.Size(112, 35);
+            this.btnSend1.Size = new System.Drawing.Size(75, 23);
             this.btnSend1.TabIndex = 2;
             this.btnSend1.Text = "button1";
             this.btnSend1.UseVisualStyleBackColor = true;
@@ -79,46 +74,41 @@
             // 
             // btnSend2
             // 
-            this.btnSend2.Location = new System.Drawing.Point(560, 574);
-            this.btnSend2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnSend2.Location = new System.Drawing.Point(373, 373);
             this.btnSend2.Name = "btnSend2";
-            this.btnSend2.Size = new System.Drawing.Size(112, 35);
+            this.btnSend2.Size = new System.Drawing.Size(75, 23);
             this.btnSend2.TabIndex = 3;
             this.btnSend2.Text = "button2";
             this.btnSend2.UseVisualStyleBackColor = true;
             // 
             // btnSend3
             // 
-            this.btnSend3.Location = new System.Drawing.Point(560, 619);
-            this.btnSend3.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnSend3.Location = new System.Drawing.Point(373, 402);
             this.btnSend3.Name = "btnSend3";
-            this.btnSend3.Size = new System.Drawing.Size(112, 35);
+            this.btnSend3.Size = new System.Drawing.Size(75, 23);
             this.btnSend3.TabIndex = 4;
             this.btnSend3.Text = "button3";
             this.btnSend3.UseVisualStyleBackColor = true;
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(18, 533);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.textBox1.Location = new System.Drawing.Point(12, 346);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(530, 26);
+            this.textBox1.Size = new System.Drawing.Size(355, 20);
             this.textBox1.TabIndex = 5;
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(18, 578);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.textBox2.Location = new System.Drawing.Point(12, 376);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(530, 26);
+            this.textBox2.Size = new System.Drawing.Size(355, 20);
             this.textBox2.TabIndex = 6;
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(18, 622);
-            this.textBox3.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.textBox3.Location = new System.Drawing.Point(12, 404);
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(530, 26);
+            this.textBox3.Size = new System.Drawing.Size(355, 20);
             this.textBox3.TabIndex = 7;
             // 
             // serialPort1
@@ -128,10 +118,9 @@
             // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(167, 13);
-            this.btnStart.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnStart.Location = new System.Drawing.Point(111, 8);
             this.btnStart.Name = "btnStart";
-            this.btnStart.Size = new System.Drawing.Size(112, 35);
+            this.btnStart.Size = new System.Drawing.Size(75, 23);
             this.btnStart.TabIndex = 8;
             this.btnStart.Text = "Start";
             this.btnStart.UseVisualStyleBackColor = true;
@@ -139,10 +128,9 @@
             // 
             // btnSendPreAmble
             // 
-            this.btnSendPreAmble.Location = new System.Drawing.Point(680, 530);
-            this.btnSendPreAmble.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnSendPreAmble.Location = new System.Drawing.Point(453, 344);
             this.btnSendPreAmble.Name = "btnSendPreAmble";
-            this.btnSendPreAmble.Size = new System.Drawing.Size(112, 79);
+            this.btnSendPreAmble.Size = new System.Drawing.Size(75, 51);
             this.btnSendPreAmble.TabIndex = 9;
             this.btnSendPreAmble.Text = "Send Preamble";
             this.btnSendPreAmble.UseVisualStyleBackColor = true;
@@ -151,34 +139,38 @@
             // lblStatus
             // 
             this.lblStatus.AutoSize = true;
-            this.lblStatus.Location = new System.Drawing.Point(14, 667);
+            this.lblStatus.Location = new System.Drawing.Point(9, 434);
+            this.lblStatus.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(56, 20);
+            this.lblStatus.Size = new System.Drawing.Size(37, 13);
             this.lblStatus.TabIndex = 10;
             this.lblStatus.Text = "Status";
             // 
             // tbSerialPortNo
             // 
-            this.tbSerialPortNo.Location = new System.Drawing.Point(60, 17);
+            this.tbSerialPortNo.Location = new System.Drawing.Point(40, 11);
+            this.tbSerialPortNo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.tbSerialPortNo.Name = "tbSerialPortNo";
-            this.tbSerialPortNo.Size = new System.Drawing.Size(100, 26);
+            this.tbSerialPortNo.Size = new System.Drawing.Size(68, 20);
             this.tbSerialPortNo.TabIndex = 11;
             this.tbSerialPortNo.Text = "COM6";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(16, 20);
+            this.label1.Location = new System.Drawing.Point(11, 13);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(38, 20);
+            this.label1.Size = new System.Drawing.Size(26, 13);
             this.label1.TabIndex = 12;
             this.label1.Text = "Port";
             // 
             // btnClearLog
             // 
-            this.btnClearLog.Location = new System.Drawing.Point(18, 450);
+            this.btnClearLog.Location = new System.Drawing.Point(12, 292);
+            this.btnClearLog.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnClearLog.Name = "btnClearLog";
-            this.btnClearLog.Size = new System.Drawing.Size(142, 35);
+            this.btnClearLog.Size = new System.Drawing.Size(95, 23);
             this.btnClearLog.TabIndex = 13;
             this.btnClearLog.Text = "Clear Log";
             this.btnClearLog.UseVisualStyleBackColor = true;
@@ -186,9 +178,9 @@
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(824, 710);
+            this.ClientSize = new System.Drawing.Size(549, 461);
             this.Controls.Add(this.btnClearLog);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tbSerialPortNo);
@@ -203,7 +195,6 @@
             this.Controls.Add(this.btnSend1);
             this.Controls.Add(this.listBoxHex);
             this.Controls.Add(this.listBoxASCII);
-            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);

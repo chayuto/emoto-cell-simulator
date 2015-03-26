@@ -84,19 +84,19 @@ namespace eMotoCellSimulator
 
         private void Data_rx(object sender, EventArgs e)
         {
-            listBoxASCII.Items.Add(Encoding.ASCII.GetString(incomingBuffer));
-            string hex = BitConverter.ToString(incomingBuffer).Replace("-", ":");
-            listBoxHex.Items.Add(hex);
+       
+            listBoxHex.Items.Add("Current:" + mainBuffer.Length.ToString());
+            listBoxHex.Items.Add("Incoming:" + incomingBuffer.Length.ToString()); 
 
             byte[] tempBuffer = new byte[mainBuffer.Length + incomingBuffer.Length];
             Buffer.BlockCopy(mainBuffer, 0, tempBuffer, 0, mainBuffer.Length);
             Buffer.BlockCopy(incomingBuffer, 0, tempBuffer, mainBuffer.Length, incomingBuffer.Length);
-
+            listBoxHex.Items.Add("Combined:" + tempBuffer.Length.ToString());
             mainBuffer = tempBuffer;
 
             lblStatus.Text = BitConverter.ToString(tempBuffer).Replace("-", ":");
 
-            for (int i =0; i<= mainBuffer.Length-8; i++)
+            for (int i =0; i<= mainBuffer.Length-LEN_PKT_HEADER; i++)
             {
                 if(mainBuffer[i] == PREAMBLE0)
                 {
@@ -140,7 +140,10 @@ namespace eMotoCellSimulator
                             //Extract pkt from main Buffer
                             Buffer.BlockCopy(mainBuffer, iMessageLength + i, newRemainingMainBuffer, 0, iNewRemainingMainBufferLength);
                             Buffer.BlockCopy(mainBuffer, LEN_PKT_HEADER + i, contentBytes, 0, iContentLength);
+                            listBoxHex.Items.Add("Remaining:" + newRemainingMainBuffer.Length.ToString());
+                            listBoxHex.Items.Add("Content:" + contentBytes.Length.ToString());
                             mainBuffer = newRemainingMainBuffer;
+                            i = 0;
 
                             listBoxASCII.Items.Add("messageBytes:" + BitConverter.ToString(headerBytes).Replace("-", ":"));
                             listBoxASCII.Items.Add("contentBytes:" + BitConverter.ToString(contentBytes).Replace("-", ":"));
