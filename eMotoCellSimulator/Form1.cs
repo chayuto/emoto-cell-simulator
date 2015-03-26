@@ -139,14 +139,19 @@ namespace eMotoCellSimulator
                             //Extract pkt from main Buffer
                             Buffer.BlockCopy(mainBuffer, iMessageLength + i, newRemainingMainBuffer, 0, iNewRemainingMainBufferLength);
                             Buffer.BlockCopy(mainBuffer, LEN_PKT_HEADER + i, contentBytes, 0, iContentLength);
-                            mainBuffer = newRemainingMainBuffer; 
-                           
+                            mainBuffer = newRemainingMainBuffer;
+
+                            listBoxASCII.Items.Add("messageBytes:" + BitConverter.ToString(headerBytes).Replace("-", ":"));
+                            listBoxASCII.Items.Add("contentBytes:" + BitConverter.ToString(contentBytes).Replace("-", ":"));
+
                             // TODO: nack Pkt of content corrupt
                             if (contentCRC != xCRCGen.crc_8_ccitt(contentBytes, iContentLength))
                             {
                                 listBoxASCII.Items.Add("Packet Content Corrupt");
+                                return;
                             }
 
+                            
                             //Analyse Header
                             switch (command)
                             {
@@ -155,6 +160,12 @@ namespace eMotoCellSimulator
                                     break;
                                 case SET_COMMAND: listBoxASCII.Items.Add("Command: SET_COMMAND");
                                     // TODO: Process data
+
+                                    // HACK: if data is valid 
+                                    eMotoPacket mPacket = new eMotoPacket(ACK_COMMAND, transactionID, null);
+                                    byte[] byteToSend = mPacket.getPacketByte();
+                                    serialPort1.Write(byteToSend, 0, byteToSend.Length);
+
                                     break;
 
                                 default:
@@ -162,8 +173,7 @@ namespace eMotoCellSimulator
                                     break;
                             }
 
-                            listBoxASCII.Items.Add("messageBytes:" + BitConverter.ToString(headerBytes).Replace("-", ":"));
-                            listBoxASCII.Items.Add("contentBytes:" + BitConverter.ToString(contentBytes).Replace("-", ":"));
+                       
                         }
                         else
                         {
