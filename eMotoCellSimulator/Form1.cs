@@ -13,37 +13,37 @@ namespace eMotoCellSimulator
     
     public partial class Form1 : Form
     {
-        public static byte[] PREAMBLE = {(byte)0xEC,(byte)0xDF};
-        public static const byte PREAMBLE0 = (byte)0xEC;
-        public static const byte PREAMBLE1 = (byte)0xDF;
-        public static const byte GET_STATUS = (byte)0xA5;
-        public static const byte RTS_IMAGE = (byte)0x4B;
-        public static const byte ACK_IMAGE_INFO = (byte)0x6B;
-        public static const byte ACK_IMAGE_DATA = (byte)0x4A;
-        public static const byte NACK_RTS = (byte)0x9E;
+        public byte[] PREAMBLE = {(byte)0xEC,(byte)0xDF};
+        public const byte PREAMBLE0 = (byte)0xEC;
+        public const byte PREAMBLE1 = (byte)0xDF;
+        public const byte GET_STATUS = (byte)0xA5;
+        public const byte RTS_IMAGE = (byte)0x4B;
+        public const byte ACK_IMAGE_INFO = (byte)0x6B;
+        public const byte ACK_IMAGE_DATA = (byte)0x4A;
+        public const byte NACK_RTS = (byte)0x9E;
               
-        public static const byte GET_COMMAND = (byte)0xA5;
-        public static const byte SET_COMMAND = (byte)0x4B;
-        public static const byte ACK_COMMAND= (byte)0x6B;
-        public static const byte NACK_COMMAND = (byte)0x8E;
+        public const byte GET_COMMAND = (byte)0xA5;
+        public const byte SET_COMMAND = (byte)0x4B;
+        public const byte ACK_COMMAND= (byte)0x6B;
+        public const byte NACK_COMMAND = (byte)0x8E;
              
-        public static const byte DID_DEVICE_ID = (byte)0x00;
-        public static const byte DID_HW_VERSION = (byte)0x01;
-        public static const byte DID_FW_VERSION = (byte)0x02;
-        public static const byte DID_PROTOCOL = (byte)0x03;
-        public static const byte DID_C_TIME = (byte)0x10;
-        public static const byte DID_IMG_INFO = (byte)0x20;
-        public static const byte DID_IMG_DATA = (byte)0x21;
-        public static const byte DID_IMG_ONLIST = (byte)0x22;
+        public const byte DID_DEVICE_ID = (byte)0x00;
+        public const byte DID_HW_VERSION = (byte)0x01;
+        public const byte DID_FW_VERSION = (byte)0x02;
+        public const byte DID_PROTOCOL = (byte)0x03;
+        public const byte DID_C_TIME = (byte)0x10;
+        public const byte DID_IMG_INFO = (byte)0x20;
+        public const byte DID_IMG_DATA = (byte)0x21;
+        public const byte DID_IMG_ONLIST = (byte)0x22;
             
-        public static const int LEN_DID_ACK_DEV_ID = 4;
-        public static const int LEN_DID_GET_DEV_ID = 1;
-        public static const int LEN_DID_HW_VER = 2;
-        public static const int LEN_DID_FW_VER = 2;
-        public static const int LEN_DID_C_TIME = 6;
-        public static const int LEN_DID_SET_IMG_INFO = 15;
+        public const int LEN_DID_ACK_DEV_ID = 4;
+        public const int LEN_DID_GET_DEV_ID = 1;
+        public const int LEN_DID_HW_VER = 2;
+        public const int LEN_DID_FW_VER = 2;
+        public const int LEN_DID_C_TIME = 6;
+        public const int LEN_DID_SET_IMG_INFO = 15;
              
-        public static const int LEN_PKT_HEADER = 8;
+        public const int LEN_PKT_HEADER = 8;
 
         string strBuff;
         byte[] incomingBuffer;
@@ -102,6 +102,7 @@ namespace eMotoCellSimulator
                 {
                     if(mainBuffer[i+1] == PREAMBLE1)
                     {
+                        listBoxASCII.Items.Add(" ");
                         listBoxASCII.Items.Add("Preamble Detected");
 
                         byte[] headerBytes = new byte[LEN_PKT_HEADER];
@@ -162,7 +163,8 @@ namespace eMotoCellSimulator
                                     // TODO: Process data
 
                                     // HACK: if data is valid 
-                                    eMotoPacket mPacket = new eMotoPacket(ACK_COMMAND, transactionID, null);
+                                    byte[] bytePayload = new byte[2];
+                                    eMotoPacket mPacket = new eMotoPacket(ACK_COMMAND, transactionID, bytePayload);
                                     byte[] byteToSend = mPacket.getPacketByte();
                                     serialPort1.Write(byteToSend, 0, byteToSend.Length);
 

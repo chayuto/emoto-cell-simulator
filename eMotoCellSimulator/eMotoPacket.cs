@@ -9,15 +9,15 @@ namespace eMotoCellSimulator
     class eMotoPacket
     {
         //const
-        public static const byte PREAMBLE0 = (byte)0xEC;
-        public static const byte PREAMBLE1 = (byte)0xDF;
+        public  const byte PREAMBLE0 = (byte)0xEC;
+        public  const byte PREAMBLE1 = (byte)0xDF;
 
-        public static const byte GET_COMMAND = (byte)0xA5;
-        public static const byte SET_COMMAND = (byte)0x4B;
-        public static const byte ACK_COMMAND = (byte)0x6B;
-        public static const byte NACK_COMMAND = (byte)0x8E;
+        public  const byte GET_COMMAND = (byte)0xA5;
+        public  const byte SET_COMMAND = (byte)0x4B;
+        public  const byte ACK_COMMAND = (byte)0x6B;
+        public  const byte NACK_COMMAND = (byte)0x8E;
 
-        public static const int LEN_PKT_HEADER = 8;
+        public  const int LEN_PKT_HEADER = 8;
         
         private byte command;
         private byte transationID;
