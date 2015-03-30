@@ -166,9 +166,14 @@ namespace eMotoCellSimulator
                                     // TODO: Process data
 
                                     // HACK: if data is valid 
-                                    byte[] bytePayload = new byte[2];
+                                    byte[] bytePayload = new byte[30];
+                                    for (int j = 0; j < 30; j++)
+                                    {
+                                        bytePayload[j] = (byte)j;
+                                    }
                                     eMotoPacket mPacket = new eMotoPacket(ACK_COMMAND, transactionID, bytePayload);
                                     byte[] byteToSend = mPacket.getPacketByte();
+                                    Console.WriteLine("Send:" + BitConverter.ToString(byteToSend).Replace("-", ":"));
                                     serialPort1.Write(byteToSend, 0, byteToSend.Length);
 
                                     break;

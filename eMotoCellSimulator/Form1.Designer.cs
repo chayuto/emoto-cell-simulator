@@ -113,6 +113,7 @@
             // 
             // serialPort1
             // 
+            this.serialPort1.BaudRate = 115200;
             this.serialPort1.PortName = "COM5";
             this.serialPort1.ReadBufferSize = 50000;
             // 
@@ -149,7 +150,7 @@
             // tbSerialPortNo
             // 
             this.tbSerialPortNo.Location = new System.Drawing.Point(40, 11);
-            this.tbSerialPortNo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tbSerialPortNo.Margin = new System.Windows.Forms.Padding(2);
             this.tbSerialPortNo.Name = "tbSerialPortNo";
             this.tbSerialPortNo.Size = new System.Drawing.Size(68, 20);
             this.tbSerialPortNo.TabIndex = 11;
@@ -168,7 +169,7 @@
             // btnClearLog
             // 
             this.btnClearLog.Location = new System.Drawing.Point(12, 292);
-            this.btnClearLog.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnClearLog.Margin = new System.Windows.Forms.Padding(2);
             this.btnClearLog.Name = "btnClearLog";
             this.btnClearLog.Size = new System.Drawing.Size(95, 23);
             this.btnClearLog.TabIndex = 13;

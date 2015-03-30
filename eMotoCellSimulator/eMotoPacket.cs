@@ -54,6 +54,7 @@ namespace eMotoCellSimulator
             byte[] packetByte = new byte[LEN_PKT_HEADER + Payload.Length];
             Buffer.BlockCopy(this.getHeader(), 0, packetByte, 0, LEN_PKT_HEADER);
             Buffer.BlockCopy(Payload, 0, packetByte, LEN_PKT_HEADER, Payload.Length);
+            Console.WriteLine("Packet:"+ BitConverter.ToString(packetByte).Replace("-", ":"));
 
             return packetByte;
         }
