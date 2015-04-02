@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
+using System.Threading;
+
 using System.IO.Ports;
 
 namespace eMotoCellSimulator
@@ -44,10 +46,13 @@ namespace eMotoCellSimulator
         public const int LEN_DID_SET_IMG_INFO = 15;
              
         public const int LEN_PKT_HEADER = 8;
+        public const int LEN_PKT_PREAMBLE = 2;
 
         string strBuff;
         byte[] incomingBuffer;
         byte[] mainBuffer = new byte[1];
+
+        Thread ThreadSerialPortRead;
 
         public Form1()
         {
@@ -69,17 +74,89 @@ namespace eMotoCellSimulator
         {
             try
             {
-                serialPort1.DataReceived += new SerialDataReceivedEventHandler(Port_DataReceived);
+               // serialPort1.DataReceived += new SerialDataReceivedEventHandler(Port_DataReceived);
                 //serialPort1.Encoding = new UnicodeEncoding();
                 serialPort1.PortName = tbSerialPortNo.Text;
                 serialPort1.Open();
                 serialPort1.DiscardInBuffer();
+
+                if (ThreadSerialPortRead == null)
+                {
+                    
+                    ThreadSerialPortRead = new Thread(SerialPortRead);
+                   ThreadSerialPortRead.Start();
+
+                }
 
             }
             catch (Exception ex)
             {
                MessageBox.Show(ex.StackTrace);
             }
+        }
+
+
+        private void SerialPortRead()
+        {
+           while(true){
+
+             byte firstByte =  (byte) serialPort1.ReadByte();
+             Console.WriteLine("first byte" + firstByte.ToString());
+             if (firstByte == PREAMBLE0)
+             {
+                 byte secondByte = (byte)serialPort1.ReadByte();
+                 Console.WriteLine("second byte" + secondByte.ToString());
+                 if (secondByte == PREAMBLE1)
+                 {
+                     Console.WriteLine("Preamble Detected" );
+                     
+                     byte[] headerBytes = new byte[LEN_PKT_HEADER];
+
+                     int i = 0;
+                     while (i != LEN_PKT_HEADER - LEN_PKT_PREAMBLE)
+                     {
+                         i += serialPort1.Read(headerBytes, i + LEN_PKT_PREAMBLE, LEN_PKT_HEADER - LEN_PKT_PREAMBLE - i);
+                     }
+                     Console.WriteLine("Heaeder Read completed");
+                     Console.WriteLine(BitConverter.ToString(headerBytes).Replace("-", ":"));
+                     byte transactionID = headerBytes[2];
+                     byte command = headerBytes[3];
+                     byte contentSize0 = headerBytes[4];
+                     byte contentSize1 = headerBytes[5];
+                     byte contentCRC = headerBytes[6];
+                     byte headerCRC = headerBytes[7];
+
+                     byte[] contentSizeArray = { contentSize0, contentSize1 };
+
+                     byte[] ContentSizeArray = new byte[2] { contentSize0, contentSize1 };
+                     int iContentLength = (int)BitConverter.ToInt16(ContentSizeArray, 0);
+                     Console.WriteLine("Payload Length:" + iContentLength.ToString());
+
+                     byte[] contentBytes = new byte[iContentLength];
+                     if (iContentLength > 0)
+                     {
+                         i = 0; //reset counter 
+                         while (i != iContentLength)
+                         {
+                             i += serialPort1.Read(contentBytes, i, iContentLength -  i);
+                         }
+                     }
+
+                     Console.WriteLine("Content Read completed");
+                     //Console.WriteLine(BitConverter.ToString(contentBytes).Replace("-", ":"));
+
+                     //Log.d(TAG,String.format("Read %x",secondByte));
+
+                     //  "Detect incoming PreAmble");
+                 }
+             }
+           }
+
+        }
+
+        private void PacketData(object sender, EventArgs e)
+        {
+
         }
 
         private void Data_rx(object sender, EventArgs e)
