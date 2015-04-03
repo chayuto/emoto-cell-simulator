@@ -87,6 +87,12 @@ namespace eMotoCellSimulator
                    ThreadSerialPortRead.Start();
 
                 }
+                else
+                {
+                    ThreadSerialPortRead.Abort();
+                    ThreadSerialPortRead = new Thread(SerialPortRead);
+                    ThreadSerialPortRead.Start();
+                }
 
             }
             catch (Exception ex)
@@ -148,11 +154,49 @@ namespace eMotoCellSimulator
                      //Log.d(TAG,String.format("Read %x",secondByte));
 
                      //  "Detect incoming PreAmble");
+
+                     // TODO: nack Pkt of content corrupt
+                     if (contentCRC != xCRCGen.crc_8_ccitt(contentBytes, iContentLength))
+                     {
+                         Console.WriteLine("Packet Content Corrupt");
+                         return;
+                     }
+
+
+                     //Analyse Header
+                     switch (command)
+                     {
+                         case GET_COMMAND: Console.WriteLine("Command: GET_COMMAND");
+                             // TODO: Process get command 
+                             break;
+                         case SET_COMMAND: Console.WriteLine("Command: SET_COMMAND");
+                             // TODO: Process data
+
+                             // HACK: if data is valid 
+                             byte[] bytePayload = new byte[30];
+                             for (int j = 0; j < 30; j++)
+                             {
+                                 bytePayload[j] = (byte)j;
+                             }
+                             eMotoPacket mPacket = new eMotoPacket(ACK_COMMAND, transactionID, bytePayload);
+                             byte[] byteToSend = mPacket.getPacketByte();
+                             Console.WriteLine("Send:" + BitConverter.ToString(byteToSend).Replace("-", ":"));
+                             serialPort1.Write(byteToSend, 0, byteToSend.Length);
+
+                             break;
+
+                         default:
+                             Console.WriteLine("Unrecognized command");
+                             break;
+                     }
+
                  }
              }
            }
 
         }
+
+
 
         private void PacketData(object sender, EventArgs e)
         {
