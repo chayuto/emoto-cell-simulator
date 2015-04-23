@@ -48,6 +48,9 @@ namespace eMotoCellSimulator
         public const int LEN_PKT_HEADER = 8;
         public const int LEN_PKT_PREAMBLE = 2;
 
+        public byte[] CELL_DEV_ID = new byte[] { DID_DEVICE_ID ,0x00, 0x00, 0x00, 0x00 };
+        public byte[] CELL_DEV_ID2 = new byte[] {DID_DEVICE_ID , 0x00, 0x00, 0x00, 0x01 };
+
         string strBuff;
         byte[] incomingBuffer;
         byte[] mainBuffer = new byte[1];
@@ -101,6 +104,29 @@ namespace eMotoCellSimulator
             }
         }
 
+        private void responseDeviceID(byte transactionID)
+        {
+
+            eMotoPacket mPacket = new eMotoPacket(ACK_COMMAND, transactionID, CELL_DEV_ID);
+            byte[] byteToSend = mPacket.getPacketByte();
+            Console.WriteLine("Send:" + BitConverter.ToString(byteToSend).Replace("-", ":"));
+            serialPort1.Write(byteToSend, 0, byteToSend.Length);
+        }
+
+        private void responseSample(byte transactionID)
+        {
+            // HACK: if data is valid 
+            byte[] bytePayload = new byte[30];
+            for (int j = 0; j < 30; j++)
+            {
+                bytePayload[j] = (byte)j;
+            }
+            bytePayload[0] = DID_IMG_DATA;
+            eMotoPacket mPacket = new eMotoPacket(ACK_COMMAND, transactionID, bytePayload);
+            byte[] byteToSend = mPacket.getPacketByte();
+            Console.WriteLine("Send:" + BitConverter.ToString(byteToSend).Replace("-", ":"));
+            serialPort1.Write(byteToSend, 0, byteToSend.Length);
+        }
 
         private void SerialPortRead()
         {
@@ -151,38 +177,36 @@ namespace eMotoCellSimulator
                      Console.WriteLine("Content Read completed");
                      //Console.WriteLine(BitConverter.ToString(contentBytes).Replace("-", ":"));
 
-                     //Log.d(TAG,String.format("Read %x",secondByte));
-
-                     //  "Detect incoming PreAmble");
-
                      // TODO: nack Pkt of content corrupt
                      if (contentCRC != xCRCGen.crc_8_ccitt(contentBytes, iContentLength))
                      {
                          Console.WriteLine("Packet Content Corrupt");
                          return;
                      }
-
-
                      //Analyse Header
                      switch (command)
                      {
                          case GET_COMMAND: Console.WriteLine("Command: GET_COMMAND");
                              // TODO: Process get command 
+                             byte DIDbyte = contentBytes[0];
+                             Console.WriteLine(DIDbyte);
+                             switch (DIDbyte)
+                             {
+                                 case DID_DEVICE_ID:
+                                     responseDeviceID(transactionID);
+                                     break;
+                                 case DID_HW_VERSION:
+                                 case DID_FW_VERSION:
+                                 case DID_IMG_DATA:
+                                 case DID_PROTOCOL:
+                                 case DID_IMG_ONLIST:
+                                 default:
+                                     break;
+                             }
                              break;
                          case SET_COMMAND: Console.WriteLine("Command: SET_COMMAND");
                              // TODO: Process data
-
-                             // HACK: if data is valid 
-                             byte[] bytePayload = new byte[30];
-                             for (int j = 0; j < 30; j++)
-                             {
-                                 bytePayload[j] = (byte)j;
-                             }
-                             eMotoPacket mPacket = new eMotoPacket(ACK_COMMAND, transactionID, bytePayload);
-                             byte[] byteToSend = mPacket.getPacketByte();
-                             Console.WriteLine("Send:" + BitConverter.ToString(byteToSend).Replace("-", ":"));
-                             serialPort1.Write(byteToSend, 0, byteToSend.Length);
-
+                             responseSample(transactionID);                         
                              break;
 
                          default:
@@ -334,6 +358,11 @@ namespace eMotoCellSimulator
         {
             listBoxASCII.Items.Clear();
             listBoxHex.Items.Clear();
+        }
+
+        private void tbSerialPortNo_TextChanged(object sender, EventArgs e)
+        {
+
         }
 
 
